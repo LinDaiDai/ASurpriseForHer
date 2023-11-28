@@ -1,18 +1,19 @@
+// @ts-ignore
 import { Link, Outlet } from 'umi';
-import styles from './index.less';
+import './index.less';
 
 export default function Layout() {
   return (
-    <div className={styles.navs}>
+    <div className="navs">
       <ul>
         <li>
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/docs">Docs</Link>
+          <Link to="/map">Map</Link>
         </li>
         <li>
-          <a href="https://github.com/umijs/umi">Github</a>
+          <Link to="/games">Games</Link>
         </li>
       </ul>
       <Outlet />
