@@ -7,6 +7,7 @@ export default defineConfig({
     { path: "/map", component: "map" },
     {
       path: "/games",
+      layout: false,
       routes: [
         { path: "/games/maze", component: "games/levels/maze" },
         { path: "/games/pingPong", component: "games/levels/pingPong" },
@@ -19,5 +20,7 @@ export default defineConfig({
   alias: {
     '@assets': path.resolve(__dirname, 'src/assets'),
     '@store': path.resolve(__dirname, 'src/store'),
+    '@style': path.resolve(__dirname, 'src/style'),
+    '@components': path.resolve(__dirname, 'src/components'),
   }
 });

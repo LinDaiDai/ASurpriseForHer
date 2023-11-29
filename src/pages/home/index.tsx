@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 // @ts-ignore
 import { Link } from 'umi';
 import './index.less';
+import '../../style/base.less';
 
 const Home = observer(() => {
 
