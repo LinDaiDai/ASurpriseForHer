@@ -45,8 +45,8 @@ class MazeGame {
 		scene.fogStart = 10.0;
 		scene.fogEnd = 70.0;
 		scene.gravity = new Vector3(0, -0.9, 0);
-			scene.collisionsEnabled = true;
-	
+		scene.collisionsEnabled = true;
+
 		// camera
 			var camera = new ArcRotateCamera("Camera", 3 * Math.PI / 2, Math.PI / 4, 30, new Vector3(0, 3, 0), scene);
 	

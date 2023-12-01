@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { MazeGame } from './mazeGame';
+// import { MazeGame } from './mazeGame';
+import { MazeGame } from './game';
 import '@style/base.less';
 import { PreGame } from '@components/preGame';
 import { Pre } from './pre';
@@ -23,9 +24,9 @@ const Maze = () => {
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      {!isStart ? <PreGame>
+      {/* {!isStart ? <PreGame>
         <Pre onStart={handleStart}></Pre>
-      </PreGame> : null }
+      </PreGame> : null } */}
       <canvas ref={canvasRef} style={{ width: '100%', height: '100%'}} id="renderCanvas"></canvas>
     </div>
   );
