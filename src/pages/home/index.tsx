@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { Link } from 'umi';
 import './index.less';
 import '../../style/base.less';
+import { Button } from '@components/button';
 
 const Home = observer(() => {
 
