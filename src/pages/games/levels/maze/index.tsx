@@ -3,6 +3,7 @@ import { levelStore } from '@/store/level';
 import { MazeGame } from './game';
 import { PreGame } from '@components/preGame';
 import { Button } from '@components/button';
+import { useGameStatus } from '@hooks/useGameStatus';
 import { Pre } from './pre';
 import { End } from './end';
 import '@style/base.less';
@@ -10,11 +11,18 @@ import './index.less';
 
 const Maze = () => {
   const gameRef = useRef<MazeGame | null>(null);
-  const [status, setStatus] = useState<string>('pre');
   const [score, setScore] = useState<number>(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [countDown, setCountDown] = useState<number>(15);
-  const timerRef = useRef<any>(null);
+
+  const handleEnd = () => {
+    levelStore.updateLevelScore(1, gameRef.current?.getScore() || 0);
+    levelStore.unlockLevel(1);
+    gameRef.current?.dispose();
+  };
+
+  const { gameStatus, countDown, changeGameStatus } = useGameStatus({
+    onGameEnd: handleEnd,
+  });
 
   useEffect(() => {
     if (canvasRef.current && !gameRef.current) {
@@ -32,26 +40,7 @@ const Maze = () => {
   }, [canvasRef.current]);
 
   const handleStart = () => {
-    setStatus('start');
-
-    timerRef.current = setInterval(() => {
-      setCountDown((prev) => {
-        if (prev <= 0) {
-          clearInterval(timerRef.current);
-          handleEnd();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
-  const handleEnd = () => {
-    levelStore.updateLevelScore(1, gameRef.current?.getScore() || 0);
-    levelStore.unlockLevel(1);
-    setStatus('end');
-    clearInterval(timerRef.current);
-    gameRef.current?.dispose();
+    changeGameStatus('playing');
   };
 
   const handleBackToSquareOne = () => {
@@ -62,7 +51,7 @@ const Maze = () => {
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      {status === 'pre' ? <PreGame>
+      {gameStatus === 'ready' ? <PreGame>
         <Pre onStart={handleStart}></Pre>
       </PreGame> : null }
       <canvas ref={canvasRef} id="renderCanvas"></canvas>
@@ -73,7 +62,7 @@ const Maze = () => {
           onClick={handleBackToSquareOne}
         >回到起点</Button>
       </div>
-      {status === 'end' ? <PreGame>
+      {gameStatus === 'end' ? <PreGame>
         <End score={score}></End>
       </PreGame> : null }
     </div>

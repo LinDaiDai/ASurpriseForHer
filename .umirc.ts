@@ -22,5 +22,6 @@ export default defineConfig({
     '@store': path.resolve(__dirname, 'src/store'),
     '@style': path.resolve(__dirname, 'src/style'),
     '@components': path.resolve(__dirname, 'src/components'),
+    '@hooks': path.resolve(__dirname, 'src/hooks'),
   }
 });
