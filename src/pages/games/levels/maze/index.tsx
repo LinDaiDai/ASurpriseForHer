@@ -15,7 +15,7 @@ const Maze = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleEnd = () => {
-    levelStore.updateLevelScore(1, gameRef.current?.getScore() || 0);
+    levelStore.updateLevelScore(1, gameRef.current?.score || 0);
     levelStore.unlockLevel(1);
     gameRef.current?.dispose();
   };
@@ -30,8 +30,7 @@ const Maze = () => {
         setScore(score);
       }
 
-      const game = new MazeGame();
-      game.init({
+      const game = new MazeGame({
         canvas: canvasRef.current,
       });
       game.registerScoreChange(handleScoreChange);

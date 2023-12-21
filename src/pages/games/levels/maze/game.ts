@@ -8,20 +8,11 @@ import {
   ShadowGenerator,
   StandardMaterial,
   MeshBuilder,
-  CreateSphere,
-	Engine,
   Axis,
   Mesh,
-  FreeCamera,
 } from '@babylonjs/core';
-
 import { BrickProceduralTexture, RoadProceduralTexture } from '@babylonjs/procedural-textures';
-
-
-interface IProps {
-	canvas: HTMLCanvasElement;
-}
-
+import { GameBase, IGameProps } from '../../gameBase';
 
 interface IPlayer extends Mesh {
   speed: Vector3;
@@ -29,9 +20,7 @@ interface IPlayer extends Mesh {
   nexttorch: Vector3;
 }
 
-class MazeGame {
-  private _canvas!: HTMLCanvasElement;
-  private _scene!: Scene;
+class MazeGame extends GameBase {
   private _camera!: ArcRotateCamera;
   private _shadowGenerator!: ShadowGenerator;
   private _player!: IPlayer;
@@ -39,24 +28,10 @@ class MazeGame {
   private _torch!: PointLight;
   private _lightImpostor!: Mesh;
   private _dots: Mesh[] = [];
-  private _score: number = 0;
-  private _onScoreChange: (score: number) => void = () => {};
 
-  public init(props: IProps) {
-    const { canvas } = props;
-    this._canvas = canvas;
-		const engine = new Engine(canvas, true);
-		const scene = this.createScene(engine);
-		engine.runRenderLoop(function () {
-			scene.render();
-		});
-		window.addEventListener("resize", function () {
-			engine.resize();
-		});
-  }
-
-  public registerScoreChange(cb: (score: number) => void) {
-    this._onScoreChange = cb;
+  constructor(props: IGameProps) {
+    super(props);
+    this.initScene();
   }
 
   public backToSquareOne() {
@@ -69,8 +44,8 @@ class MazeGame {
     camera.setTarget(Vector3.Zero()); // 初始相机目标是 (0, 0, 0)
   }
   
-  public createScene(engine: Engine) {
-    const scene = new Scene(engine);
+  public initScene() {
+    const scene = this.scene;
 
     const bgColor = Color3.FromHexString('#101230');
     scene.clearColor = bgColor.toColor4(1);
@@ -85,10 +60,10 @@ class MazeGame {
     
     scene.gravity = new Vector3(0, -0.9, 0);
     scene.collisionsEnabled = true;
-    this._scene = scene;
+    this.scene = scene;
 
     const camera = new ArcRotateCamera("Camera", 3 * Math.PI / 2, Math.PI / 4, 30, new Vector3(0, 3, 0), scene);
-    // camera.attachControl(this._canvas, true);
+    // camera.attachControl(this.canvas, true);
     this._camera = camera;
 
     // 点光源
@@ -117,24 +92,16 @@ class MazeGame {
     return scene;
   }
 
-  public dispose() {
-    this._scene.dispose();
-  }
-
-  public getScore() {
-    return this._score;
-  }
-
   private _createGround() {
     // 地板纹理
-    const roadTexture = new RoadProceduralTexture("road", 512, this._scene);
+    const roadTexture = new RoadProceduralTexture("road", 512, this.scene);
     // 地板材质
-    const groundMat = new StandardMaterial("gmat", this._scene);
+    const groundMat = new StandardMaterial("gmat", this.scene);
     groundMat.diffuseTexture = roadTexture;
     groundMat.specularPower = 5;
 
     // 地板
-    const ground = MeshBuilder.CreatePlane("g", { size: 120 }, this._scene);
+    const ground = MeshBuilder.CreatePlane("g", { size: 120 }, this.scene);
     ground.position = new Vector3(0, 0, 0);
     ground.rotation.x = Math.PI / 2;
     ground.material = groundMat;
@@ -144,11 +111,11 @@ class MazeGame {
 
   private _createWalls() {
     // 砖块纹理
-    const brickTexture = new BrickProceduralTexture("brick", 512, this._scene);
+    const brickTexture = new BrickProceduralTexture("brick", 512, this.scene);
     brickTexture.numberOfBricksHeight = 5;
     brickTexture.numberOfBricksWidth = 5;
     // 墙壁
-    const wallMat = new StandardMaterial("wallMat", this._scene);
+    const wallMat = new StandardMaterial("wallMat", this.scene);
     wallMat.diffuseTexture = brickTexture;
     // 墙壁
     for (var i = 0; i < 100; i++) {
@@ -156,7 +123,7 @@ class MazeGame {
       var px = Math.random() * 100 - 50;
       var pz = Math.random() * 100 - 50;
       if ((px > 4 || px < -4) && (pz > 4 || pz < -4)) {
-        var wall = MeshBuilder.CreateBox("w" + i, { size: 3 }, this._scene);
+        var wall = MeshBuilder.CreateBox("w" + i, { size: 3 }, this.scene);
         wall.position = new Vector3(px, 1.5, pz);
         if (Math.random() > 0.5) {
           wall.scaling.x = 3;
@@ -172,14 +139,14 @@ class MazeGame {
 
   private _createDots() {
     for (let i = 0; i < 20; i++) {
-      const dotMat = new StandardMaterial("dot", this._scene);
+      const dotMat = new StandardMaterial("dot", this.scene);
       dotMat.emissiveColor = Color3.FromHexString('#ff9900');
       dotMat.specularPower = 128;
   
       const dot = MeshBuilder.CreateSphere("dot", {
         segments: 8,
         diameter: 0.5,
-      }, this._scene);
+      }, this.scene);
       dot.material = dotMat;
       dot.position = this._generateDotRandomPosition();
       this._shadowGenerator.getShadowMap()?.renderList?.push(dot);
@@ -199,7 +166,7 @@ class MazeGame {
   }
 
   private _checkCollisionWithWalls(position: Vector3) {
-    const walls = this._scene.meshes.filter((mesh) => mesh.name.startsWith('w'));
+    const walls = this.scene.meshes.filter((mesh) => mesh.name.startsWith('w'));
     for (var i = 0; i < walls.length; i++) {
       const wall = walls[i];
       if (wall.intersectsPoint(wall.position)) {
@@ -211,7 +178,7 @@ class MazeGame {
   }
 
   private _createPlayer() {
-    const scene = this._scene;
+    const scene = this.scene;
 
     var player1Mat = new StandardMaterial("pmat", scene);
 		player1Mat.emissiveColor = Color3.FromHexString('#ff9900');
@@ -297,7 +264,7 @@ class MazeGame {
 
   private _bindMovePlayer() {
     const player = this._player;
-    this._canvas.addEventListener('keydown', (event) => {
+    this.canvas.addEventListener('keydown', (event) => {
       this._keyCodeMap[event.keyCode] = true;
 
        // 阻止键盘事件的默认行为和冒泡
@@ -305,17 +272,17 @@ class MazeGame {
       event.stopPropagation();
 		});
 	
-    this._canvas.addEventListener('keyup', (event) => {
+    this.canvas.addEventListener('keyup', (event) => {
 			this._keyCodeMap[event.keyCode] = false;
 		});
 	
-    this._canvas.addEventListener('blur', (event) => {
+    this.canvas.addEventListener('blur', (event) => {
 			for (var k in this._keyCodeMap) {
 				this._keyCodeMap[k] = false;
 			}
     });
     
-    this._scene.registerBeforeRender(() => {
+    this.scene.registerBeforeRender(() => {
       const v = 0.5;
       let tempv = Vector3.Zero();
 
@@ -398,9 +365,9 @@ class MazeGame {
           dot.dispose();
           this._dots.splice(i, 1);
           i--;
-          this._score = this._score + 1;
-          this._onScoreChange(this._score);
-          console.log('score:', this._score);
+          this.score = this.score + 1;
+          this.onScoreChange(this.score);
+          console.log('score:', this.score);
         }
       }
     });
