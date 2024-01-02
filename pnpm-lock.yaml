@@ -23,9 +23,15 @@ dependencies:
   '@babylonjs/serializers':
     specifier: ^6.31.0
     version: 6.31.0(@babylonjs/core@6.31.0)(babylonjs-gltf2interface@6.31.0)
+  '@types/cannon':
+    specifier: ^0.1.12
+    version: 0.1.12
   '@types/lodash':
     specifier: ^4.14.202
     version: 4.14.202
+  cannon:
+    specifier: ^0.6.2
+    version: 0.6.2
   lodash:
     specifier: ^4.17.21
     version: 4.17.21
@@ -1501,6 +1507,10 @@ packages:
       '@babel/types': 7.23.4
     dev: false
 
+  /@types/cannon@0.1.12:
+    resolution: {integrity: sha512-YzVDrjM+H1IH4pnw23nDFDXaWEyvYIq/Tmp75wg9CmtIiBJd3GtXzo5UXp+bAgk76fom9RhSlQIzHT8haF5VuQ==}
+    dev: false
+
   /@types/eslint-scope@3.7.7:
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
     dependencies:
@@ -2832,6 +2842,10 @@ packages:
 
   /caniuse-lite@1.0.30001565:
     resolution: {integrity: sha512-xrE//a3O7TP0vaJ8ikzkD2c2NgcVUvsEe2IvFTntV4Yd1Z9FVzh+gW+enX96L0psrbaFMcVcH2l90xNuGDWc8w==}
+    dev: false
+
+  /cannon@0.6.2:
+    resolution: {integrity: sha512-n/7wWSXr8KOSvjad2x0fJHgpMepKjOKi+NdSnjfYyijoDBZnp4JQKgPcpv28jlXoWM+N9zVYU09J0A6Qxx+Y7w==}
     dev: false
 
   /chalk@2.4.2:
