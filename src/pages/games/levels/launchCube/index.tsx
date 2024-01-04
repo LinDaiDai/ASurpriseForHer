@@ -41,6 +41,11 @@ const LaunchCube = () => {
     changeGameStatus('playing');
   };
 
+  const submit = () => {
+    const number = gameRef.current?.getCorrectNumber();
+    console.log(number);
+  }
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
       {/* {gameStatus === 'ready' ? <PreGame>
@@ -48,8 +53,9 @@ const LaunchCube = () => {
       </PreGame> : null } */}
       <canvas ref={canvasRef} id="renderCanvas"></canvas>
       <div className="buttons">
-        <div>分数：{ score }</div>
-        <div>剩余时间：{ countDown }</div>
+        <Button
+          onClick={submit}
+        >提交</Button>
       </div>
       {gameStatus === 'end' ? <PreGame>
         <End score={score}></End>

@@ -12,7 +12,7 @@ import {
   PointerEventTypes,
   DynamicTexture, StandardMaterial,
 } from '@babylonjs/core';
-import { TOWERS } from './constants';
+import { TOWERS, CORRECT_NAMES } from './constants';
 import { GameBase, IGameProps } from '../../gameBase';
 import { GridMaterial } from '@babylonjs/materials';
 
@@ -56,7 +56,7 @@ class LaunchCubeGame extends GameBase {
         const text = TOWERS[x][z];
 
         const material = this._createTextMaterial(text);
-        const box = MeshBuilder.CreateBox("towerBox", { size: 2 }, this.scene);
+        const box = MeshBuilder.CreateBox(text || "towerBox", { size: 2 }, this.scene);
         box.position.x = (x - 4) * 6;
         box.position.y = 2 + z * 2;
         box.position.z = 40;
@@ -101,7 +101,6 @@ class LaunchCubeGame extends GameBase {
 
         const bullet = MeshBuilder.CreateSphere('bullet', { diameter: 0.2 });
         const ray = event.pickInfo?.ray;
-        console.log(ray);
         if (!ray) return;
         ray.direction.scaleInPlace(0.2);
         bullet.position.copyFrom(ray.origin);
@@ -110,6 +109,18 @@ class LaunchCubeGame extends GameBase {
         bullet.physicsImpostor.setLinearVelocity(ray.direction.scale(400));
       }
     });
+  }
+
+  public getCorrectNumber() {
+    let correctNumber = 0;
+    console.log(this._towerMeshes);
+    for (let i = 0; i < this._towerMeshes.length; i++) {
+      const mesh = this._towerMeshes[i];
+      if (mesh.position.y <= 2 && CORRECT_NAMES.includes(mesh.name)) {
+        correctNumber++;
+      }
+    }
+    return correctNumber;
   }
 }
 
