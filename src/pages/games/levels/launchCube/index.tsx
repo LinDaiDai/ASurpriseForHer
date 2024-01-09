@@ -14,25 +14,24 @@ const LaunchCube = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleEnd = () => {
-    levelStore.updateLevelScore(1, gameRef.current?.score || 0);
-    levelStore.unlockLevel(1);
-    gameRef.current?.dispose();
+    const number = gameRef.current?.getCorrectNumber();
+    console.log(number);
+    setScore(number || 0);
+    levelStore.updateLevelScore(3, number || 0);
+    levelStore.unlockLevel(3);
+    gameRef.current?.dispose?.();
   };
 
-  const { gameStatus, countDown, changeGameStatus } = useGameStatus({
+  const { gameStatus, changeGameStatus } = useGameStatus({
+    countDownNumber: 'none',
     onGameEnd: handleEnd,
   });
 
   useEffect(() => {
     if (canvasRef.current && !gameRef.current) {
-      const handleScoreChange = (score: number) => {
-        setScore(score);
-      }
-
       const game = new LaunchCubeGame({
         canvas: canvasRef.current,
       });
-      game.registerScoreChange(handleScoreChange);
       gameRef.current = game;
     }
   }, [canvasRef.current]);
@@ -42,15 +41,14 @@ const LaunchCube = () => {
   };
 
   const submit = () => {
-    const number = gameRef.current?.getCorrectNumber();
-    console.log(number);
+    changeGameStatus('end');
   }
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      {/* {gameStatus === 'ready' ? <PreGame>
+      {gameStatus === 'ready' ? <PreGame>
         <Pre onStart={handleStart}></Pre>
-      </PreGame> : null } */}
+      </PreGame> : null }
       <canvas ref={canvasRef} id="renderCanvas"></canvas>
       <div className="buttons">
         <Button

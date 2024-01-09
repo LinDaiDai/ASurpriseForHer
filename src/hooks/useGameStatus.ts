@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 
 interface IProps {
-  countDownNumber?: number;
+  countDownNumber?: number | 'none';
   onGameEnd?: () => void;
 }
 
@@ -10,7 +10,7 @@ const DEFAULT_DOWN_NUMBER = 15;
 
 export const useGameStatus = (props: IProps) => {
   const { countDownNumber, onGameEnd } = props;
-  const [countDown, setCountDown] = useState<number>(countDownNumber || DEFAULT_DOWN_NUMBER);
+  const [countDown, setCountDown] = useState<number | 'none'>(countDownNumber || DEFAULT_DOWN_NUMBER);
   const [gameStatus, setGameStatus] = useState<TGameStatus>('ready');
   const timer = useRef<any>(null);
 
@@ -18,7 +18,7 @@ export const useGameStatus = (props: IProps) => {
     setGameStatus(status);
 
     if (status === 'playing') {
-      if (countDown) {
+      if (countDown && countDown !== 'none') {
         let count = countDown;
         timer.current = setInterval(() => {
           count--;
@@ -38,9 +38,9 @@ export const useGameStatus = (props: IProps) => {
       if (timer.current) {
         clearInterval(timer.current);
         timer.current = null;
-        console.log('end');
-        onGameEnd && onGameEnd();
       }
+      console.log('end');
+      onGameEnd && onGameEnd();
     } else if (status === 'ready') {
       setCountDown(countDownNumber || DEFAULT_DOWN_NUMBER);
     }
